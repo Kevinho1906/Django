@@ -1,0 +1,118 @@
+{% extends "index.html" %}
+{% block encabezado %}
+{% include "encabezado.html" %}
+{%endblock %}
+{% block menu %}
+{% include "administrador/menu.html" %}
+{%endblock %}
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-center align-items-center" style="margin-bottom: 7rem;">
+    <form id="frmRegistrarUsuario" action="/registrarMaterial/" method="post" enctype="multipart/form-data"
+        class="needs-validation w-75" novalidate>
+        {% csrf_token%}
+        <h3 class="text-center fw-bold">REGISTRAR MATERIALES</h3>
+        <br>
+        <div class="form-group row">
+            <div class="mb-3 col-lg-4">
+                <label for="txtReferencia" class="fw-bold">Referencia:</label>
+                <input type="text" name="txtReferencia" class="form-control" id="txtReferencia"
+                    placeholder="Referencia del material" required value="{{material.matReferencia}}">
+                <div class="invalid-feedback">Por favor ingrese la referencia del material</div>
+            </div>
+
+            <div class="mb-3 col-lg-4">
+                <label for="txtMarca" class="fw-bold">Marca: (*opcional)</label>
+                <input type="text" name="txtMarca" class="form-control" id="txtMarca" placeholder="Marca del material"
+                    value="{{material.matMarca}}">
+            </div>
+            <div class="mb-3 col-lg-4">
+                <label for="cbTipo" class="fw-bold">Tipo de material:</label>
+                <select name="cbTipo" id="cbTipo" class="form-select" required>
+                    <option value="">Seleccione</option>
+                    {% for tipo in  tipoMaterial %}
+                    <option value="{{tipo.0}}">{{tipo.1}}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Por favor eliga un tipo</div>
+            </div>
+            <div class="mb-3 col-lg-3">
+                <label for="cbUnidadM" class="fw-bold">Unidad de Medida:</label>
+                <select name="cbUnidadM" id="cbUnidadM" class="form-select" required>
+                    <option value="">Seleccione</option>
+                    {% for unidad in unidades %}
+                    <option>{{unidad.}}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Por favor eliga una unidad</div>
+            </div>
+        </div>
+        <br>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-secondary">Registrar</button>
+            <a href="/vistaGestionarMateriales/"><button type="button" class="btn btn-danger mx-2">Cancelar</button></a>
+        </div>
+    </form>
+</div>
+
+{% if mensaje %}
+{% if estado %}
+<script>
+    Swal.fire({
+        title: 'Registro Elementos Devolutivos',
+        text: '{{mensaje}}',
+        icon: 'success',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            location.href = "/vistaRegistrarMateriales/"
+        }
+    });
+</script>
+{% else %}
+<script>
+    Swal.fire({
+        title: 'Registro Materiales',
+        text: '{{mensaje}}',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('cbTipo').value = "{{material.}}"
+        }
+    })
+</script>
+{% endif %}
+{% endif %}
+
+<script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (() => {
+            "use strict";
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll(".needs-validation");
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach((form) => {
+                form.addEventListener(
+                    "submit",
+                    (event) => {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add("was-validated");
+                    },
+                    false
+                );
+            });
+        })();
+</script>
+{%endblock %}
+{% block piePagina %}
+{% include "piePagina.html" %}
+{%endblock %}
