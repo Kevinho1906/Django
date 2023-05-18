@@ -13,6 +13,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 import threading
 from smtplib import SMTPException
+from django.http import JsonResponse
+
 # Create your views here.
 datosSesion={"user":None,"rutaFoto":None, "rol":None}
 
@@ -207,7 +209,7 @@ def SolicitarElementos(request):
 def vistaGestionarElementos(request):
     if request.user.is_authenticated:
         retorno = {"devolutivos":Devolutivo.objects.all(),"user":request.user}
-        return render(request,"administrador/vistaGestionarElementos.html",retorno)
+        return render(request,"asistente/vistaGestionarElementos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
@@ -216,7 +218,7 @@ def vistaGestionarElementos(request):
 def vistaRegistrarElementos(request):
     if request.user.is_authenticated:
         retorno = {"tipoElemento": tipoElemento,"estadoElemento":estadosElementos,"user":request.user}
-        return render(request,"administrador/frmRegistrarElementos.html",retorno)
+        return render(request,"asistente/frmRegistrarElementos.html",retorno)
     else:
         mensaje="Debe iniciar sesión"
         return render(request, "frmIniciarSesion.html",{"mensaje":mensaje})
@@ -267,18 +269,16 @@ def registrarElementos(request):
         transaction.rollback()
         mensaje=f"{error}"
     retorno = {"mensaje":mensaje,"devolutivo": devolutivo,"estado":estado,"tipoElemento": tipoElemento,"estadoElemento":estadosElementos}
-    return render(request,"administrador/frmRegistrarElementos.html",retorno)
+    return render(request,"asistente/frmRegistrarElementos.html",retorno)
 
 def vistaRegistrarMaterial(request):
-    unidadesMedida = UnidadMedida.objects.all()
-    retorno = {"unidadesMedida": unidadesMedida, "estados": estadosElementos} 
+    retorno = {"estados": estadosElementos} 
     return render(request, "asistente/frmRegistrarMaterial.html", retorno)
 
 def registrarMaterial(request):
     estado=False
     try:
         nombre = request.POST["txtNombre"]
-        unidadMedida = int(request.POST["cbUnidadMedida"])
         marca = request.POST.get("txtMarca", None) 
         descripcion = request.POST.get("txtDescripcion",None)
         estado = request.POST["cbEstado"] 
@@ -288,7 +288,6 @@ def registrarMaterial(request):
         locker = request.POST.get("txtLocker",False)
         with transaction.atomic():
             
-            unidadM =  UnidadMedida.objects.get(pk=unidadMedida)
             cantidad = Elemento.objects.all().filter(eleTipo='MAT').count() 
             codigoElemento = "MAT" + str(cantidad+1).rjust(6, '0')
             
@@ -316,10 +315,49 @@ def registrarMaterial(request):
     retorno = {"mensaje" :mensaje, "material": material, "estado":estado} 
     return render(request, "asistente/frmRegistrarMaterial.html", retorno)
 
-def vistaRegistrarEntradaMateriales(request):
-    materiales = Material.objects.all()
-    unidadesMedida = UnidadMedida.objects.all()
-    proveedores = Proveedor.objects.all()
+# def vistaRegistrarEntradaMateriales(request):
+#     materiales = Material.objects.all()
+#     proveedores = Proveedor.objects.all()
+#     usuarios = User.objects.all()
+#     retorno = {"usuarios": usuarios, "materiales": materiales, "proveedores": proveedores}
+#     return render(request, "asistente/frmRegistrarEntradaMaterial.html", retorno)
+
+def vistaEntradaMaterial (request):
+    proveedores =Proveedor.objects.all()
     usuarios = User.objects.all()
-    retorno = {"unidadesMedida": unidadesMedida, "usuarios": usuarios, "materiales": materiales, "proveedores": proveedores}
+    materiales = Material.objects.all() 
+    unidadesMedida = UnidadMedida.objects.all()
+    retorno = {"proveedores": proveedores, "usuarios": usuarios, "materiales":materiales,"unidadesMedida": unidadesMedida} 
     return render(request, "asistente/frmRegistrarEntradaMaterial.html", retorno)
+
+def registrarEntradaMaterial (request):
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                estado = False
+                codigoFactura = request.POST['codigoFactura']
+                entregadoPor = request.POST['entregadoPor']
+                idProveedor = int(request.POST['proveedor'])
+                recibidoPor = int(request.POST['recibidoPor'])
+                fechaHora = request.POST.get('fechaHora', None) 
+                observaciones = request.POST['observaciones']
+                userRecibe = User.objects.get(pk=recibidoPor)
+                proveedor = Proveedor.objects.get(pk=idProveedor)
+                entradaMaterial = EntradaMaterial(entNumeroFactura = codigoFactura, entFechaHora =  fechaHora, entUsuarioRecibe = userRecibe, entEntregadoPor = entregadoPor, entProveedor = proveedor, entObservaciones = observaciones)
+                entradaMaterial.save()
+                detalleMateriales = json.loads(request.POST['detalle'])
+                for detalle in detalleMateriales:
+                    material = Material.objects.get(id=int(detalle['idMaterial']))
+                    cantidad = int(detalle['cantidad'])
+                    precio = int(detalle['precio'])
+                    estado = detalle['estado'] 
+                    unidadMedida = UnidadMedida.objects.get(pk=int(detalle['idUnidad Medida']))
+                    detalleEntrada = DetalleEntradaMaterial(detEntradaMaterial = entradaMaterial, detMaterial = material, detUnidadMedida = unidadMedida, detCantidad = cantidad, detPrecioUnitario = precio, devEstado = estado)
+                    detalleEntrada.save()
+                estado=True
+                mensaje="Se ha registrado la entrada de Materiales correctamente"
+        except Error as error:
+            transaction.rollback()
+            mensaje=f"{error}"
+        retorno={"estado": estado, "mensaje":mensaje}
+        return JsonResponse(retorno)
