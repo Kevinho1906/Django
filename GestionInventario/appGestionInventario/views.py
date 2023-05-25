@@ -272,7 +272,8 @@ def registrarElementos(request):
     return render(request,"asistente/frmRegistrarElementos.html",retorno)
 
 def vistaRegistrarMaterial(request):
-    retorno = {"estados": estadosElementos} 
+    unidadesMedida = UnidadMedida.objects.all()
+    retorno = {"unidadesMedida":unidadesMedida, "estados": estadosElementos} 
     return render(request, "asistente/frmRegistrarMaterial.html", retorno)
 
 def registrarMaterial(request):
@@ -298,12 +299,12 @@ def registrarMaterial(request):
             elemento.save()
             
             #crear el material
-            material =Material(matReferencia = descripcion,matMarca=marca, matUnidadMedida = unidadM, matElemento = elemento)
+            material =Material(matReferencia = descripcion, matMarca=marca, matElemento = elemento)
             material.save()
             
             #crear objeto ubicación física del elemeto
             ubicacion = UbicacionFisica(ubiDeposito = deposito, ubiEstante = estante,
-            ubiEntrepano =entrepano,ubiLocker = locker,ubiElemento = elemento)
+            ubiEntrepano = entrepano, ubiLocker = locker, ubiElemento = elemento)
             
             #registrar en la base de datos la ubicación física del elemento
             ubicacion.save()
@@ -311,7 +312,7 @@ def registrarMaterial(request):
             mensaje = f"Material registrado Satisfactoriamente con el codigo {codigoElemento}"
     except Error as error:
         transaction.rollback() 
-        mensaje = f"error"
+        mensaje = f"Error al Registrar el Material {error}"
     retorno = {"mensaje" :mensaje, "material": material, "estado":estado} 
     return render(request, "asistente/frmRegistrarMaterial.html", retorno)
 
@@ -334,6 +335,7 @@ def registrarEntradaMaterial (request):
     if request.method == 'POST':
         try:
             with transaction.atomic():
+                
                 estado = False
                 codigoFactura = request.POST['codigoFactura']
                 entregadoPor = request.POST['entregadoPor']
@@ -351,13 +353,13 @@ def registrarEntradaMaterial (request):
                     cantidad = int(detalle['cantidad'])
                     precio = int(detalle['precio'])
                     estado = detalle['estado'] 
-                    unidadMedida = UnidadMedida.objects.get(pk=int(detalle['idUnidad Medida']))
+                    unidadMedida = UnidadMedida.objects.get(pk=int(detalle['idUnidadMedida']))
                     detalleEntrada = DetalleEntradaMaterial(detEntradaMaterial = entradaMaterial, detMaterial = material, detUnidadMedida = unidadMedida, detCantidad = cantidad, detPrecioUnitario = precio, devEstado = estado)
                     detalleEntrada.save()
                 estado=True
                 mensaje="Se ha registrado la entrada de Materiales correctamente"
         except Error as error:
             transaction.rollback()
-            mensaje=f"{error}"
+            mensaje=f"Erro al Registrar la Entrada de Materiales {error}"
         retorno={"estado": estado, "mensaje":mensaje}
         return JsonResponse(retorno)

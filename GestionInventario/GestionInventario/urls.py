@@ -38,7 +38,7 @@ urlpatterns = [
     path('vistaRegistrarMateriales/',views.vistaRegistrarMaterial),
     path('registrarMateriales/',views.registrarMaterial),
     path('vistaEntradaMaterial/',views.vistaEntradaMaterial),
-    path('registrarEntradaMaterial/',views.registrarMaterial),
+    path('registrarEntradaMaterial/',views.registrarEntradaMaterial),
 ]
 
 if settings.DEBUG:

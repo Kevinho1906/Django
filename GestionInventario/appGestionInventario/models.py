@@ -131,7 +131,7 @@ class DetalleEntradaMaterial(models.Model):
     detMaterial = models.ForeignKey(Material, on_delete=models.PROTECT,
                         db_comment="Hace referencia al material que se está registrando en la entrada")
     detCantidad=models.IntegerField(db_comment="Cantidad que ingresa del material")
-    detUnidadMedida = models.ForeignKey(UnidadMedida,on_delete=models.PROTECT, db_comment="Hace referencia a la Unidad de Medida FK")
+    detUnidadMedida = models.ForeignKey(UnidadMedida,on_delete=models.PROTECT, null=True, db_comment="Hace referencia a la Unidad de Medida FK")
     detPrecioUnitario = models.IntegerField(db_comment="Precio del material que ingresa")
     detEstado = models.CharField(max_length=7,choices=estadosElementos,db_comment="estado del Elemento")
     fechaHoraCreacion  = models.DateTimeField(auto_now_add=True,db_comment="Fecha y hora del registro")
