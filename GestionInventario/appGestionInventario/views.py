@@ -354,7 +354,7 @@ def registrarEntradaMaterial (request):
                     precio = int(detalle['precio'])
                     estado = detalle['estado'] 
                     unidadMedida = UnidadMedida.objects.get(pk=int(detalle['idUnidadMedida']))
-                    detalleEntrada = DetalleEntradaMaterial(detEntradaMaterial = entradaMaterial, detMaterial = material, detUnidadMedida = unidadMedida, detCantidad = cantidad, detPrecioUnitario = precio, devEstado = estado)
+                    detalleEntrada = DetalleEntradaMaterial(detEntradaMaterial = entradaMaterial, detMaterial = material, detUnidadMedida = unidadMedida, detCantidad = cantidad, detPrecioUnitario = precio, detEstado = estado)
                     detalleEntrada.save()
                 estado=True
                 mensaje="Se ha registrado la entrada de Materiales correctamente"

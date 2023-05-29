@@ -233,4 +233,3 @@ class UbicacionFisica(models.Model):
     
     def __str__(self)->str:
         return f"{self.ubiElemento}-{self.ubiDeposito}-{self.ubiEstante}-{self.ubiEntrepano}-{self.ubiLocker}"
-    
