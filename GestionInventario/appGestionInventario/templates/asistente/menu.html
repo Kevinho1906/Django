@@ -14,7 +14,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <select id="cbRolMenu" name="cbRolMenu" class="form-control custom-select">
+            <select id="cbRolMenu" name="cbRolMenu" class="form-control custom-select" onchange="cambiarMenuRol()">
               {% for group in request.user.groups.all %}
                 {% if group.name == 'Administrador' %}
                   <option value="Administrador">Administrador</option>
