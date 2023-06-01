@@ -40,6 +40,8 @@ urlpatterns = [
     path('registrarMateriales/',views.registrarMaterial),
     path('vistaEntradaMaterial/',views.vistaEntradaMaterial),
     path('registrarEntradaMaterial/',views.registrarEntradaMaterial),
+    path('vistaGestionarMisSolicitudes/',views.solicitudesInstructor),
+    path('registrarMisSolicitudes/',views.registrarEntradaSolicitud),
 ]
 
 if settings.DEBUG:

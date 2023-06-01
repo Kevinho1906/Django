@@ -363,3 +363,45 @@ def registrarEntradaMaterial (request):
             mensaje=f"Erro al Registrar la Entrada de Materiales {error}"
         retorno={"estado": estado, "mensaje":mensaje}
         return JsonResponse(retorno)
+    
+def solicitudesInstructor(request):
+    solicitudes = SolicitudElemento.objects.filter(solUsuario=request.user)
+    detalleSolicitudes = []
+    for solicitud in solicitudes:
+        detalle = DetalleSolicitud.objects.filter(detSolicitud = solicitud)
+        detalleSolicitudes.append(detalle)
+    retorno = {"solicitudes":solicitudes, "detalleSolicitudes":detalleSolicitudes}
+    return render(request, "instructor/misSolicitudes.html", retorno)
+
+def vistaEntradaSolicitud(request):
+    fichas =Ficha.objects.all()
+    retorno = {"fichas": fichas} 
+    return render(request, "instructor/vistaRegistrarSolicitud.html", retorno)
+
+def registrarEntradaSolicitud(request):
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                
+                estado = False
+                ficha = request.POST['ficha']
+                nombreProyecto = request.POST['nombreProyecto']
+                fechaHoraRequerida = request.POST.get('fechaHoraRequerida', None)
+                fechaHoraFin = request.POST.get('fechaHoraFin', None)
+                observaciones = request.POST['observaciones']
+                solicitudElemento = SolicitudElemento(solFicha = ficha, solProyecto =  nombreProyecto, solFechaHoraRequerida = fechaHoraRequerida, solFechaHoraFin = fechaHoraFin, solObservaciones = observaciones)
+                solicitudElemento.save()
+                detalleSolicitud = json.loads(request.POST['detalle'])
+                for detalle in detalleSolicitud:
+                    elemento = Elemento.objects.get(id=int(detalle['eleNombre']))
+                    cantidad = int(detalle['cantidad']) 
+                    unidadMedida = UnidadMedida.objects.get(pk=int(detalle['idUnidadMedida']))
+                    solicitudDetalle = DetalleSolicitud(detElemento = elemento, detCantidadRequerida = cantidad, detUnidadMedida = unidadMedida)
+                    solicitudDetalle.save()
+                estado=True
+                mensaje="Se ha Registrado la Solicitud correctamente"
+        except Error as error:
+            transaction.rollback()
+            mensaje=f"Erro al Registrar la Solicitud {error}"
+        retorno={"estado": estado, "mensaje":mensaje}
+        return JsonResponse(retorno)
