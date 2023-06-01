@@ -1,0 +1,21 @@
+.verdeSena{
+    background-color:#39A900;
+}
+
+.icon:hover{
+    color: #39A900;
+    cursor: pointer;
+}
+
+.btn2{
+    background-color: white;
+    border-color: #39A900;
+}
+.btn2:hover{
+    background-color:#39A900;
+    cursor: pointer;
+    border-color: black;
+    color: white;
+   
+}
+

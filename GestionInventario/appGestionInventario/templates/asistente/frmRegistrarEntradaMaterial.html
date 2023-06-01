@@ -21,50 +21,51 @@
 <h3 class="text-center fw-bold">REGISTRAR ENTRADA DE MATERIALES</h3>
 <div class="principal" style="width: 100%;">
     <div id="datosGenerales">
-        <div class="form-group row">
+        <form action="" id="frmDatosGenerales">
+            <div class="form-group row">
+                <div class="col-lg-2 mb-3">
+                    <label for="txtFactura" class="fw-bold">Código Factura:</label>
+                    <input type="number" name="txtFactura" value="1" id="txtFactura" class="form-control" required>
+                </div>
+                <div class="col-lg-6 mb-3">
+                    <label for="txtEntregadoPor" class="fw-bold">Entregado Por:</label>
+                    <input type="text" name="txtEntregadoPor" id="txtEntregadoPor" class="form-control" required>
+                </div>
+                <div class="col-lg-4 mb-3">
+                    <label for="cbProveedor" class="fw-bold">Proveedor:</label>
+                    <select name="cbProveedor" id="cbProveedor" class="form-select">
+                        <option value="">Seleccione</option>
+                        {% for proveedor in proveedores %}
+                        <option value="{{proveedor.id}}">{{proveedor.proNombre}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
 
-            <div class="col-lg-2 mb-3">
-                <label for="txtFactura" class="fw-bold">Código Factura:</label>
-                <input type="number" name="txtFactura" value="1" id="txtFactura" class="form-control" required>
+                <div class="col-lg-8 mb-3">
+                    <label for="cbRecibidoPor" class="fw-bold">Recibido Por:</label>
+                    <select name="cbRecibidoPor" id="cbRecibidoPor" class="form-select">
+                        <option value="">Seleccione</option>
+                        {% for usuario in usuarios %}
+                        {% if usuario.username != 'admin' %}
+                        <option value="{{usuario.id}}">{{usuario.first_name}} {{usuario.last_name}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-4 mb-3">
+                    <label for="txtFecha" class="fw-bold">Fecha de Entrega:</label>
+                    <input type="Date" name="txtFecha" id="txtFecha" class="form-control" required>
+                </div>
             </div>
-            <div class="col-lg-6 mb-3">
-                <label for="txtEntregadoPor" class="fw-bold">Entregado Por:</label>
-                <input type="text" name="txtEntregadoPor" id="txtEntregadoPor" class="form-control" required>
+            <div class="form-group">
+                <button type="button" id="btnAbrirModalAnexarMaterial" class="btn btn2" data-bs-toggle="modal"
+                    data-bs-target="#modalMaterial">
+                    Anexar Material
+                </button>
             </div>
-            <div class="col-lg-4 mb-3">
-                <label for="cbProveedor" class="fw-bold">Proveedor:</label>
-                <select name="cbProveedor" id="cbProveedor" class="form-select">
-                    <option value="">Seleccione</option>
-                    {% for proveedor in proveedores %}
-                    <option value="{{proveedor.id}}">{{proveedor.proNombre}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-        <div class="form-group row">
-
-            <div class="col-lg-8 mb-3">
-                <label for="cbRecibidoPor" class="fw-bold">Recibido Por:</label>
-                <select name="cbRecibidoPor" id="cbRecibidoPor" class="form-select">
-                    <option value="">Seleccione</option>
-                    {% for usuario in usuarios %}
-                    {% if usuario.username != 'admin' %}
-                    <option value="{{usuario.id}}">{{usuario.first_name}} {{usuario.last_name}}</option>
-                    {% endif %}
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-lg-4 mb-3">
-                <label for="txtFecha" class="fw-bold">Fecha de Entrega:</label>
-                <input type="Date" name="txtFecha" id="txtFecha" class="form-control" required>
-            </div>
-        </div>
-        <div class="form-group">
-            <button type="button" id="btnAbrirModalAnexarMaterial" class="btn btn-outline-success"
-                data-bs-toggle="modal" data-bs-target="#modalMaterial">
-                Anexar Material
-            </button>
-        </div>
+        </form>
     </div>
     <hr class="text-secondary fw-bold">
     <h3 class="text-center fw-bold">Detalle Entrada Materiales</h3>
@@ -89,7 +90,7 @@
     </div>
 
     <div class="text-center">
-        <button class="btn btn-outline-success mt-5" id="btnRegistrarDetalle" style="margin: 0 auto">Finalizar
+        <button class="btn btn2 mt-5" id="btnRegistrarDetalle" style="margin: 0 auto">Finalizar
             Registro</button>
     </div>
 
@@ -114,7 +115,8 @@
                                     <option value="">Seleccione</option>
                                     {% for material in materiales %}
                                     <option value="{{material.id}}">
-                                        {{material.matElemento.eleCodigo}}-{{material.matElemento.eleNombre}}</option>
+                                        {{material.matElemento.eleCodigo}}-{{material.matElemento.eleNombre}}
+                                    </option>
                                     {% endfor %}
 
                                 </select>
@@ -171,7 +173,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button class="btn btn-outline-success" id="btnAgregarMaterialDetalle" data-bs-dismiss="modal">Add
+                    <button class="btn btn2" id="btnAgregarMaterialDetalle" data-bs-dismiss="modal">Add
                         Detalle</button>
                     <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -179,6 +181,7 @@
             </div>
         </div>
     </div>
+    </form>
 </div>
 {% if mensaje %}
 {% if estado %}

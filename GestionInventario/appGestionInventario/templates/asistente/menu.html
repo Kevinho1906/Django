@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+<nav class="navbar navbar-expand-lg navbar-dark verdeSena">
     <div class="container-fluid">
       <a class="navbar-brand" href="/inicioAsistente/">
         {% if user.userFoto != "" and user.userFoto != "False" %}
@@ -26,9 +26,6 @@
               {% endfor %}
             </select>
           </li>
-          <li class="nav-item">
-            <a class="nav-link text-white" href="//">Generar Reportes</a>
-          </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">Gestionar Elementos</a>
             <ul class="dropdown-menu">
@@ -37,12 +34,11 @@
               <li><a class="dropdown-item" href="/vistaGestionarElementos/">Devolutivos</a></li>         
             </ul>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">Consultar Solicitudes</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="//">Solicitudes Aceptadas</a></li>
-              <li><a class="dropdown-item" href="//">Solicitudes Pendientes</a></li>            
-            </ul>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="//">Gestionar Solicitudes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="//">Reportes</a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-white">{{user.email}}</a>
